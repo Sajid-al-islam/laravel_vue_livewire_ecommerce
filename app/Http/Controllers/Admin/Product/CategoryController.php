@@ -55,6 +55,8 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
+
+        dd($request->all());
         $validator = Validator::make(request()->all(), [
             'name' => ['required'],
             'url' => ['required', 'unique:categories', 'min:3'],

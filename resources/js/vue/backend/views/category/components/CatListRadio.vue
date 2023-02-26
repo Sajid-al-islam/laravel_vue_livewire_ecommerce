@@ -1,6 +1,14 @@
 <template>
     <ul :class="`list`">
         <div class="left_line"></div>
+        <li v-if="list[0] && list[0].parent_id == 0">
+            <div class="details">
+                <input type="radio" name="parent_id" :value="0" checked  class="form-check-input">
+                <div class="title">
+                    no parent
+                </div>
+            </div>
+        </li>
         <li v-for="category in list" :key="category.id">
             <div class="details">
                 <input type="radio" name="parent_id" :value="category.id" :data-id="category.id"  class="form-check-input">
