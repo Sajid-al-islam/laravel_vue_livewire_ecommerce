@@ -136,6 +136,19 @@
 
             .form-check-input {
                 border: 1px solid #7c81a1;
+                &:checked[type=radio]{
+                    background-color: transparent;
+                    position: relative;
+                    &::after{
+                        content: "o";
+                        font-size: 10px;
+                        color: orange;
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                    }
+                }
             }
         }
 

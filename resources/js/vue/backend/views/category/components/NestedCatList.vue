@@ -7,7 +7,7 @@
                 <input type="checkbox" :data-id="category.id" @change="selectCat(category)" class="form-check-input">
                 <div class="title">
                     {{category.name}}
-                    {{category.id}}
+                    <!-- {{category.id}} -->
                 </div>
                 <div @click="show_child($event)" v-if="category.child && category.child.length" class="collpse">
                     <i class="fa fa-plus fa-minus"></i>
@@ -101,6 +101,17 @@ export default {
             }
             this.calc_left_line();
         },
+        randomLightHexColor: function() {
+            // Generate a random number between 128 and 255 for each RGB value
+            const red = Math.floor(Math.random() * 128) + 128;
+            const green = Math.floor(Math.random() * 128) + 128;
+            const blue = Math.floor(Math.random() * 128) + 128;
+
+            // Convert the RGB values to hex format
+            const hex = '#' + red.toString(16) + green.toString(16) + blue.toString(16);
+
+            return hex;
+        }
     },
 }
 </script>

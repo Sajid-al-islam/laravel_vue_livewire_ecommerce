@@ -24,8 +24,8 @@ const getters = {
 
 const actions = {
     ...test_module.actions(),
-    [`fetch_${store_prefix}_all_json`]: function ({ commit }, payload) {
-        axios.get("/category/all-json").then((res) => {
+    [`fetch_${store_prefix}_all_json`]: async function ({ commit }, payload) {
+        await axios.get("/category/all-json").then((res) => {
             commit(`set_${store_prefix}_all_json`, res.data);
         });
     },

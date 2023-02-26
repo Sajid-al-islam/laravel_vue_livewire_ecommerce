@@ -37,12 +37,15 @@
                                     />
                                 </div>
 
+                                <div class="form-group full_width category_card_dropdown custom_scroll" >
+                                    <cat-list-radio :list="nested_cats"></cat-list-radio>
+                                </div>
 
                                 <div class="form-group full_width d-grid align-content-start gap-1 mb-2 " >
                                     <label for="description">Description</label>
                                     <textarea class="form-control" id="description" name="description"></textarea>
                                 </div>
-                                
+
                             </div>
 
                         </div>
@@ -60,14 +63,15 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import InputField from '../components/InputField.vue'
+import CatListRadio from './components/CatListRadio.vue';
 /** store and route prefix for export object use */
 import PageSetup from './PageSetup';
 const {route_prefix, store_prefix} = PageSetup;
 
 export default {
-    components: { InputField },
+    components: { InputField, CatListRadio },
     data: function(){
         return {
             /** store prefix for JSX */
@@ -75,13 +79,24 @@ export default {
             route_prefix
         }
     },
-    created: function () {},
+    created: async function () {
+        await this[`fetch_${store_prefix}_all_json`]();
+        console.log(this.nested_cats);
+    },
     methods: {
-        ...mapActions([`store_${store_prefix}`]),
+        ...mapActions([
+            `store_${store_prefix}`,
+            `fetch_${store_prefix}_all_json`,
+        ]),
         call_store: function(name, params=null){
             this[name](params)
         },
     },
+    computed: {
+        ...mapGetters({
+            nested_cats: `get_${store_prefix}_all_json_nested`,
+        })
+    }
 };
 </script>
 

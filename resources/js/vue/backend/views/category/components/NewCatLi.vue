@@ -39,7 +39,7 @@ export default {
                 let temp = [...this.all_cat_json];
                 temp.push(value);
                 this.set_cat_json(temp);
-                
+
                 this.close();
             }
         },
