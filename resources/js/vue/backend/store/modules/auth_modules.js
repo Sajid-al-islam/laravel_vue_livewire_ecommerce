@@ -30,10 +30,10 @@ const actions = {
                 this.commit('set_auth_permissions');
             })
             .catch((err)=>{
-                // this.commit('set_check_auth', false);
-                // window.localStorage.removeItem('token');
+                this.commit('set_check_auth', false);
+                window.localStorage.removeItem('token');
                 console.log('user not authenticated');
-                // window.location.href = '/login';
+                window.location.href = '/login';
             })
     },
     update_user_info: async function(state, data) {
@@ -43,9 +43,9 @@ const actions = {
     },
     change_password: async function(state, formData) {
         let res = await axios.post('/user/update-profile', formData);
-        
-        
-        return res 
+
+
+        return res
     },
     fetch_auth_information: function (state) {
         axios.post('/user/user_info')
