@@ -1,0 +1,30 @@
+$light_dark: #283046;
+$deep_dark: #161d31;
+$white: #b4b7be;
+$purple: #7367f0;
+$montserrat: Montserrat,Helvetica,Arial,serif;
+
+.custom_scroll {
+
+    /* width */
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+        background: $light_dark;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+        background: $white;
+        border-radius: 25px;
+    }
+
+    /* Handle on hover */
+    &::-webkit-scrollbar-thumb:hover {
+        background: $purple;
+    }
+}

@@ -1,0 +1,95 @@
+@import "./variables";
+
+.multiple_select_body {
+    position: relative;
+
+    .multiple_select_data {
+        position: relative;
+        width: 100%;
+        min-height: 40px;
+        display: block;
+        padding: .571rem 1rem;
+        font-size: 1rem;
+        background-clip: padding-box;
+        border: 1px solid #D8D6DE;
+        appearance: none;
+        border-radius: .357rem;
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+
+        .item {
+            background-color: $purple;
+            color: $white;
+            border-radius: 3px;
+            padding: 2px 6px;
+        }
+    }
+
+    .multiple_select_modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        backdrop-filter: blur(5px);
+        background-color: rgba(0, 0, 0, .5);
+        z-index: 99999;
+
+        .multiple_select_modal_body {
+            position: absolute;
+            min-height: max-content;
+            max-height: 780px;
+            width: 95%;
+            max-width: 992px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: $deep_dark;
+            padding: 20px;
+            overflow-y: scroll;
+
+            .header{
+                display: flex;
+                gap: 30px;
+                .search{
+                    flex: 1;
+                }
+            }
+            .selected{
+                margin: 20px 0px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                .item{
+                    button{
+                        display: flex;
+                        gap: 6px;
+                        &:hover{
+                            i{
+                                color: tomato;
+                            }
+                        }
+                    }
+                }
+            }
+            .data_list{
+                padding-bottom: 10px;
+                margin-bottom: 10px;
+            }
+            .footer_modal{
+                border-top: 1px solid rgba(128, 128, 128, 0.605);
+                padding-top: 15px;
+            }
+        }
+
+        .multiple_select_modal_backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+        }
+    }
+}

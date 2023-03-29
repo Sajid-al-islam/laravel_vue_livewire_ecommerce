@@ -1,0 +1,40 @@
+@import "./variables";
+
+.admin_form {
+    display: grid;
+    column-gap: 30px;
+
+    &.form_1 {
+        grid-template-columns: 1fr;
+
+        @media (min-width: 992px) {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    &.col_2{
+        @media (min-width: 992px) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    .full_width {
+        @media (min-width: 992px) {
+            grid-column-start: 1;
+            grid-column-end: 4;
+        }
+    }
+}
+
+.file_preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 10px 0px;
+
+    img {
+        height: 100px;
+        border: 1px solid rgba(195, 195, 195, 0.47);
+        padding: 3px;
+    }
+}

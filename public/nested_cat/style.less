@@ -1,0 +1,136 @@
+.list {
+    list-style-type: none;
+    padding-left: 35px;
+    position: relative;
+    margin-left: 0px;
+    margin-top: 0px;
+
+    .left_line {
+        position: absolute;
+        height: calc(100% - 7px);
+        width: 1px;
+        left: 6px;
+        top: -4px;
+    }
+
+    .collpse {
+        position: absolute;
+        height: 15px;
+        width: 15px;
+        z-index: 999;
+        background-color: #818181;
+        border-radius: 50%;
+        text-align: center;
+        left: -36px;
+        top: 10px;
+        cursor: pointer;
+        &:hover {
+            background-color: rgb(13, 76, 81);
+        }
+        i {
+            font-size: 9px;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: calc(50% + 0.5px);
+            transform: translate(-50%, -50%);
+        }
+    }
+
+    .left_line,
+    li::before {
+        background-color: rgb(136, 45, 45);
+    }
+    ul {
+        li::before,
+        .left_line {
+            background-color: rgb(29, 154, 173);
+        }
+
+        ul {
+            li::before,
+            .left_line {
+                background-color: rgb(139, 27, 191);
+            }
+
+            ul {
+                li::before,
+                .left_line {
+                    background-color: rgb(27, 191, 136);
+                }
+                ul {
+                    li::before,
+                    .left_line {
+                        background-color: rgb(191, 177, 27);
+                    }
+                }
+            }
+        }
+    }
+
+    .details {
+        display: flex;
+        gap: 10px;
+        padding: 5px 10px;
+
+        input[type="checkbox"] {
+            margin-top: 6px;
+        }
+
+        input:focus {
+            box-shadow: none;
+        }
+
+        .title {
+            flex: 1;
+            line-height: 26px;
+        }
+
+        // background-color: gray;
+        border-radius: 5px;
+        &:hover {
+            background-color: gray;
+        }
+
+        .append_sub_btn {
+            border: 0;
+            background-color: transparent;
+            outline: 0;
+        }
+    }
+
+    li {
+        position: relative;
+        // padding: 4px 0px;
+        font-size: 14px;
+        &::before {
+            position: absolute;
+            content: "";
+            width: 38px;
+            height: 1px;
+            top: 17px;
+            left: -28px;
+        }
+
+        & > ul {
+            display: none;
+            padding-left: 45px;
+
+            .left_line {
+                left: 16px;
+                top: -11px;
+            }
+        }
+
+        .form-check-input {
+            border: 1px solid #7c81a1;
+        }
+    }
+
+    .new_cat_li {
+        display: none;
+        &.active {
+            display: block !important;
+        }
+    }
+}

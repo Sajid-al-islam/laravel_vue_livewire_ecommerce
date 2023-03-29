@@ -1,0 +1,38 @@
+@import "./variables";
+
+.watch {
+    display: flex;
+    background-color: $purple;
+    padding: 5px;
+    border-radius: 2px;
+    font-family: clock;
+    font-size: 14px;
+    color: $deep_dark;
+    position: fixed;
+    bottom: 5px;
+    width: calc(100% - 20px);
+    left: 50%;
+    transform: translateX(-50%);
+
+    &.to_nav_watch {
+        position: unset;
+        transform: unset;
+        background-color: unset;
+
+        html.dark-layout & {
+            color: $white;
+        }
+    }
+
+    .title,
+    .hour,
+    .min,
+    .sec,
+    .meridian {
+        margin: 0px 2px;
+        min-width: 17.2px;
+        text-align: center;
+        font-family: $montserrat;
+        text-transform: capitalize;
+    }
+}

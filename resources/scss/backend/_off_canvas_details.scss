@@ -1,0 +1,78 @@
+@import "./variables";
+
+.canvas_backdrop {
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+    background-color: rgba(0, 0, 0, .5);
+    backdrop-filter: blur(5px);
+    z-index: 99999;
+    right: -200vh;
+    visibility: hidden;
+    transition-duration: .2s;
+
+    &.active {
+        right: 0;
+        visibility: visible;
+    }
+
+    .content {
+        height: 100vh;
+        min-width: 320px;
+        background-color: $light_dark;
+        padding: 20px;
+
+        @media (min-width: 768px) {
+            min-width: 450px;
+            max-width: 50vw;
+        }
+
+        &.right {
+            float: right;
+        }
+
+        .content_header {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            align-items: center;
+            border-bottom: 1px solid #585656;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+
+            i {
+                cursor: pointer;
+            }
+        }
+
+        .cotent_body {
+            padding: 20px 0px;
+            padding-top: 0;
+            max-height: calc(100vh - 95px);
+            overflow-y: scroll;
+            @extend .custom_scroll;
+
+            table {
+                thead {
+                    position: sticky;
+                    top: 0;
+                    left: 0;
+                }
+
+                tr {
+                    td {
+                        &:nth-child(1) {
+                            width: 150px;
+                            text-transform: capitalize;
+                        }
+
+                        &:nth-child(2) {
+                            width: 5px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
