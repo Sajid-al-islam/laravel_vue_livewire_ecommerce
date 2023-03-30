@@ -60,6 +60,21 @@ This is an ecommerce project developed using #laravel #vuejs #vuex #livewire. Th
 - View and manage customers.
 
 ## Contributors
-- Md Shefat Ullah Masum (@Md-shefat-masum)
-- Md Sajedul islam (@Sajid-al-islam)
+<br>
+
+> <br> 
+> <img src="https://github.com/Md-shefat-masum.png" alt="alt text" width="50" height="50" style="border-radius: 50%"> <br> 
+> <a href="https://github.com/Md-shefat-masum">Muhammad Shefat Ullah Masum</a> <br>
+> Software Engineer ( Tech Park IT )
+> <br>
+> <br>
+
+<br>
+
+> <br>
+> <img src="https://github.com/Sajid-al-islam.png" alt="alt text" width="50" height="50" style="border-radius: 50%"> <br> 
+> <a href="https://github.com/Sajid-al-islam">Muhammad Shefat Ullah Masum</a> <br>
+> Software Engineer ( Tech Park IT )
+> <br>
+> <br>
 
