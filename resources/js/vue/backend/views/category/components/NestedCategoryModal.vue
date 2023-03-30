@@ -1,6 +1,6 @@
 <template>
     <div class="multiple_select_body" :id="`${store_prefix}_id`" >
-        <div class="multiple_select_data" @click="call_store(`set_${store_prefix}_show_nested_category_modal`,true)">
+        <div id="selected_categories" class="multiple_select_data" @click="call_store(`set_${store_prefix}_show_nested_category_modal`,true)">
             <div v-for="item in this[`get_${store_prefix}_selected`]" :key="item.id" class="item">
                 {{ item.name }}
             </div>

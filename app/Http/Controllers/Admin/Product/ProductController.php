@@ -40,22 +40,27 @@ class ProductController extends Controller
                     ->orWhere('default_price', 'LIKE', '%' . $key . '%');
             });
         }
-        $query->withSum('stocks','qty');
-        $query->withSum('sales','qty');
+        $query->withSum('stocks', 'qty');
+        $query->withSum('sales', 'qty');
         $users = $query->paginate($paginate);
         return response()->json($users);
     }
 
     public function show($id)
     {
-        $data = Product::where('id',$id)->with(['categories'])->first();
-        if(!$data){
+        $data = Product::where('id', $id)->with([
+            'categories' => function($q){
+                return $q->select('categories.id','categories.parent_id','categories.name');
+            },
+        ])->first();
+
+        if (!$data) {
             return response()->json([
                 'err_message' => 'not found',
-                'errors' => ['role'=>['data not found']],
+                'errors' => ['role' => ['data not found']],
             ], 422);
         }
-        return response()->json($data,200);
+        return response()->json($data, 200);
     }
 
     public function store()
@@ -69,10 +74,15 @@ class ProductController extends Controller
             'description' => ['required'],
             'search_keywords' => ['required'],
             'page_title' => ['required'],
+            'image1' => ['required'],
             // 'product_url' => ['required', 'unique:products'],
             'meta_description' => ['required'],
             'track_inventory_on_the_variant_level_stock' => ['required'],
             'track_inventory_on_the_variant_level_low_stock' => ['required'],
+        ],[
+            'track_inventory_on_the_variant_level_stock.required' => 'stock is required',
+            'track_inventory_on_the_variant_level_low_stock.required' => 'low stock is required',
+            'image1.required' => 'thumbnail image is required',
         ]);
 
         if ($validator->fails()) {
@@ -84,46 +94,37 @@ class ProductController extends Controller
 
         $product_info = request()->except([
             'selected_categories',
-            'image'
+            'image1',
+            'image2',
+            'image3',
+            'image4',
         ]);
 
         $product_info['selected_categories'] = json_encode(request()->selected_categories);
         // $product_info['custom_fields'] = $request->custom_fields;
         // $product_info['hs_codes'] = $request->hs_codes;
 
-        $related_iamges_id = [];
-        if (request()->hasFile('image')) {
-            foreach (request()->file('image') as $key => $image) {
-
+        $related_images = [];
+        for ($i=1; $i <=4; $i++) {
+            if(request()->hasFile('image'.$i)){
                 try {
-                    $path = $this->store_product_file($image);
-                    $id = ProductImage::insertGetId([
-                        // 'product_id' => $product->id,
-                        'product_id' => 0,
-                        'image' => $path,
-                        'creator' => Auth::user()->id,
-                        'created_at' => Carbon::now()->toDateTimeString(),
-                    ]);
-                    array_push($related_iamges_id, $id);
-                } catch (Throwable $e) {
-                    dump($e);
-                    // report($e);
+                    $path = $this->store_product_file(request()->file('image'.$i));
+                    array_push($related_images, $this->save_image($path));
+                } catch (\Throwable $e) {
                     return response()->json($e, 500);
                 }
             }
         }
-        // dd($related_iamges_id);
 
-        if (count($related_iamges_id) > 0) {
+        if (count($related_images) > 0) {
             $product = Product::create($product_info);
-            // dd(request()->selected_categories, $product);
             $product->categories()->attach(request()->selected_categories);
 
             $this->product_stock_set(null, $product->id, $product->created_at, $product->track_inventory_on_the_variant_level_stock);
             $this->product_stock_log_set($product->id, $product->track_inventory_on_the_variant_level_stock, 'initial');
 
-            for ($i = 0; $i < count($related_iamges_id); $i++) {
-                $related_iamge = ProductImage::find($related_iamges_id[$i]);
+            for ($i = 0; $i < count($related_images); $i++) {
+                $related_iamge = $related_images[$i];
                 $related_iamge->product_id = $product->id;
                 $related_iamge->save();
             }
@@ -135,7 +136,6 @@ class ProductController extends Controller
         } else {
             return response()->json('Upload valid jpg or jpeg image.', 500);
         }
-
     }
 
     public function product_stock_set($supplier_id = null, $product_id, $purchase_date, $qty)
@@ -221,39 +221,53 @@ class ProductController extends Controller
 
     public function update()
     {
+        $validator = Validator::make(request()->all(), [
+            'product_name' => ['required'],
+            'default_price' => ['required'],
+            // 'brand_id' => ['required'],
+            'selected_categories' => ['required'],
+            'specification' => ['required'],
+            'description' => ['required'],
+            'search_keywords' => ['required'],
+            'page_title' => ['required'],
+            // 'product_url' => ['required', 'unique:products'],
+            'meta_description' => ['required'],
+            'track_inventory_on_the_variant_level_stock' => ['required'],
+            'track_inventory_on_the_variant_level_low_stock' => ['required'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'err_message' => 'validation error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
         $product_info = request()->except([
             'selected_categories',
-            'image'
+            'image1',
+            'image2',
+            'image3',
+            'image4',
         ]);
         $product_info['selected_categories'] = json_encode(request()->selected_categories);
 
         $product = Product::find(request()->id);
         $product->fill($product_info);
 
-        if (request()->hasFile('image')) {
-            // dd($request->file('upload_image'));
-            //
-            foreach ($product->related_image()->get() as $single_imge) {
-                // dump(public_path($single_imge->image), $single_imge);
-                if (file_exists(public_path($single_imge->image))) {
-                    unlink(public_path($single_imge->image));
+        $product_images = $product->related_image()->get();
+        for ($i=1; $i <=4; $i++) {
+            if(request()->hasFile('image'.$i)){
+                $single_image = $product_images[$i-1];
+                $path = public_path($single_image->image);
+                if(file_exists($path)){
+                    unlink($path);
                 }
-            }
-            ProductImage::where('product_id', $product->id)->delete();
-            foreach (request()->file('image') as $key => $image) {
-
                 try {
-                    $path = $this->store_product_file($image);
-                    ProductImage::insert([
-                        'product_id' => $product->id,
-                        'image' => $path,
-                        'creator' => Auth::user()->id,
-                        'created_at' => Carbon::now()->toDateTimeString(),
-                    ]);
-
-                } catch (Throwable $e) {
-                    report($e);
-
+                    $path = $this->store_product_file(request()->file('image'.$i));
+                    $single_image->image = $path;
+                    $single_image->save();
+                } catch (\Throwable $e) {
                     return response()->json($e, 500);
                 }
             }
@@ -269,13 +283,23 @@ class ProductController extends Controller
         ], 200);
     }
 
+    public function save_image($path){
+        return ProductImage::create([
+            // 'product_id' => $product->id,
+            'product_id' => 0,
+            'image' => $path,
+            'creator' => Auth::user()->id,
+            'created_at' => Carbon::now()->toDateTimeString(),
+        ]);
+    }
+
     public function canvas_update()
     {
         $data = Product::find(request()->id);
-        if(!$data){
+        if (!$data) {
             return response()->json([
                 'err_message' => 'validation error',
-                'errors' => ['name'=>['user_role not found by given id '.(request()->id?request()->id:'null')]],
+                'errors' => ['name' => ['user_role not found by given id ' . (request()->id ? request()->id : 'null')]],
             ], 422);
         }
 
@@ -305,7 +329,7 @@ class ProductController extends Controller
     public function soft_delete()
     {
         $validator = Validator::make(request()->all(), [
-            'id' => ['required','exists:products,id'],
+            'id' => ['required', 'exists:products,id'],
         ]);
 
         if ($validator->fails()) {
@@ -320,7 +344,7 @@ class ProductController extends Controller
         $data->save();
 
         return response()->json([
-                'result' => 'deactivated',
+            'result' => 'deactivated',
         ], 200);
     }
 
@@ -331,7 +355,7 @@ class ProductController extends Controller
     public function restore()
     {
         $validator = Validator::make(request()->all(), [
-            'id' => ['required','exists:products,id'],
+            'id' => ['required', 'exists:products,id'],
         ]);
 
         if ($validator->fails()) {
@@ -346,14 +370,14 @@ class ProductController extends Controller
         $data->save();
 
         return response()->json([
-                'result' => 'activated',
+            'result' => 'activated',
         ], 200);
     }
 
     public function bulk_import()
     {
         $validator = Validator::make(request()->all(), [
-            'data' => ['required','array'],
+            'data' => ['required', 'array'],
         ]);
 
         if ($validator->fails()) {
@@ -364,11 +388,11 @@ class ProductController extends Controller
         }
 
         foreach (request()->data as $item) {
-            $item['created_at'] = $item['created_at'] ? Carbon::parse($item['created_at']): Carbon::now()->toDateTimeString();
-            $item['updated_at'] = $item['updated_at'] ? Carbon::parse($item['updated_at']): Carbon::now()->toDateTimeString();
+            $item['created_at'] = $item['created_at'] ? Carbon::parse($item['created_at']) : Carbon::now()->toDateTimeString();
+            $item['updated_at'] = $item['updated_at'] ? Carbon::parse($item['updated_at']) : Carbon::now()->toDateTimeString();
             $item = (object) $item;
-            $check = Product::where('id',$item->id)->first();
-            if(!$check){
+            $check = Product::where('id', $item->id)->first();
+            if (!$check) {
                 try {
                     Product::create((array) $item);
                 } catch (\Throwable $th) {
@@ -382,5 +406,4 @@ class ProductController extends Controller
 
         return response()->json('success', 200);
     }
-
 }

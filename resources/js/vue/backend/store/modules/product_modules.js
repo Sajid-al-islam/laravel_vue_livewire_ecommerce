@@ -27,14 +27,16 @@ const actions = {
         await axios.get(url).then((res) => {
             this.commit(`set_${store_prefix}`, res.data);
 
-            var img_string="";
-            for (let index = 0; index < res.data.related_images.length; index++) {
-                let el = res.data.related_images[index];
-                img_string +=`<img src="/${el.image}"/>`
+            var images=[];
+            for (let i = 0; i < res.data.related_images.length; i++) {
+                let el = res.data.related_images[i];
+                images.push(`<img src="/${el.image}"/>`)
             }
             setTimeout(() => {
-                document.querySelector('.file_preview')&&
-                (document.querySelector('.file_preview').innerHTML = img_string)
+                var file_previews = document.querySelectorAll('.file_preview');
+                [...file_previews].forEach((i,index)=>{
+                    i.innerHTML = images[index]
+                })
             }, 1000);
 
             res.data.categories?.forEach((i) => {

@@ -37,7 +37,8 @@
                                         <label class="mb-2 text-capitalize">
                                             Select Cateogry
                                         </label>
-                                        <CategoryManagementModal/>
+                                        <!-- <CategoryManagementModal/> -->
+                                        <nested-category-modal></nested-category-modal>
                                     </div>
                                 </div>
 
@@ -46,16 +47,6 @@
                                         :label="`search keywords`"
                                         :name="`search_keywords`"
                                         :value="this[`get_${store_prefix}`]['search_keywords']"
-                                    />
-                                </div>
-                                <div class="form-group d-grid align-content-start gap-1 mb-2 " >
-                                    <input-field
-                                        :label="`photo`"
-                                        :name="`image`"
-                                        :type="`file`"
-                                        :accept="`image/*`"
-                                        :multiple="true"
-                                        :preview="true"
                                     />
                                 </div>
 
@@ -75,6 +66,50 @@
                                         :value="this[`get_${store_prefix}`]['track_inventory_on_the_variant_level_low_stock']"
                                         :type="`number`"
                                     />
+                                </div>
+
+                                <div class="full_width mb-2 row">
+
+                                    <div class="col-lg-3" >
+                                        <input-field
+                                            :label="`Thumb Image`"
+                                            :name="`image1`"
+                                            :type="`file`"
+                                            :accept="`image/*`"
+                                            :multiple="false"
+                                            :preview="true"
+                                        />
+                                    </div>
+                                    <div class="col-lg-3" >
+                                        <input-field
+                                            :label="`Related Image 1`"
+                                            :name="`image2`"
+                                            :type="`file`"
+                                            :accept="`image/*`"
+                                            :multiple="false"
+                                            :preview="true"
+                                        />
+                                    </div>
+                                    <div class="col-lg-3" >
+                                        <input-field
+                                            :label="`Related Image 2`"
+                                            :name="`image3`"
+                                            :type="`file`"
+                                            :accept="`image/*`"
+                                            :multiple="false"
+                                            :preview="true"
+                                        />
+                                    </div>
+                                    <div class="col-lg-3" >
+                                        <input-field
+                                            :label="`Related Image 3`"
+                                            :name="`image4`"
+                                            :type="`file`"
+                                            :accept="`image/*`"
+                                            :multiple="false"
+                                            :preview="true"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div class="form-group d-grid align-content-start full_width gap-1 mb-2 " >
@@ -113,9 +148,7 @@
 
                                         <div class="form-group full_width d-grid align-content-start gap-1 mb-2 " >
                                             <label for="meta_description">Meta Description</label>
-                                            <textarea class="form-control" id="meta_description" name="meta_description">
-                                                {{ this[`get_${store_prefix}`]['meta_description'] }}
-                                            </textarea>
+                                            <textarea class="form-control" :value="this[`get_${store_prefix}`]['meta_description']" id="meta_description" name="meta_description"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -137,12 +170,12 @@
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import InputField from '../components/InputField.vue'
-import CategoryManagementModal from "../category/components/ManagementModal.vue"
+import NestedCategoryModal from '../category/components/NestedCategoryModal.vue';
 /** store and route prefix for export object use */
 import PageSetup from './PageSetup';
 const {route_prefix, store_prefix} = PageSetup;
 export default {
-    components: { InputField, CategoryManagementModal },
+    components: { InputField, NestedCategoryModal },
     data: function(){
         return {
             /** store prefix for JSX */
@@ -150,13 +183,15 @@ export default {
             route_prefix,
         }
     },
-    created: function () {
-        this[`fetch_${store_prefix}`]({id: this.$route.params.id});
+    created: async function () {
+        this.set_clear_selected_categorys(false);
+        await this[`fetch_${store_prefix}`]({id: this.$route.params.id});
     },
     watch: {
         [`get_${store_prefix}`]: {
             handler: function(){
-                this.initEditor()
+                this.initEditor();
+                this.check_selected_categories();
             },
             deep: true,
         }
@@ -167,6 +202,7 @@ export default {
             `fetch_${store_prefix}`,
         ]),
         ...mapMutations([
+            `set_clear_selected_categorys`,
             `set_${store_prefix}`,
             `set_${store_prefix}_description`,
             `set_${store_prefix}_specification`,
@@ -202,10 +238,32 @@ export default {
                     that[`set_${store_prefix}_specification`](specification.data.get());
                 });
             }, 300);
+        },
+        check_selected_categories: function(){
+            setTimeout(() => {
+                for (let index = 0; index < this.selected_cats.length; index++) {
+                    const i = this.selected_cats[index];
+                    let el = document.querySelector(`input[data-id="${i.id}"]`);
+                    if(el){
+                        el.checked = true;
+                        (function check_parent(el){
+                            if(el.parentNode){
+                                if(el.parentNode.classList?.contains('list')){
+                                    el.parentNode.classList.add('d-block');
+                                }
+                                check_parent(el.parentNode)
+                            }
+                        })(el)
+                    }
+                }
+            }, 500);
         }
     },
     computed: {
-        ...mapGetters([`get_${store_prefix}`])
+        ...mapGetters({
+            selected_cats: `get_category_selected`,
+            [`get_${store_prefix}`]: `get_${store_prefix}`
+        })
     }
 };
 </script>

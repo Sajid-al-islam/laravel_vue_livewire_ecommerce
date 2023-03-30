@@ -58,17 +58,6 @@
 
                                 <div class="form-group d-grid align-content-start gap-1 mb-2 " >
                                     <input-field
-                                        :label="`photo`"
-                                        :name="`image`"
-                                        :type="`file`"
-                                        :accept="`image/*`"
-                                        :multiple="true"
-                                        :preview="true"
-                                    />
-                                </div>
-
-                                <div class="form-group d-grid align-content-start gap-1 mb-2 " >
-                                    <input-field
                                         :label="`stock`"
                                         :name="`track_inventory_on_the_variant_level_stock`"
                                         :type="`number`"
@@ -81,6 +70,50 @@
                                         :name="`track_inventory_on_the_variant_level_low_stock`"
                                         :type="`number`"
                                     />
+                                </div>
+
+                                <div class="full_width mb-2 row">
+
+                                    <div class="col-lg-3" >
+                                        <input-field
+                                            :label="`Thumb Image`"
+                                            :name="`image1`"
+                                            :type="`file`"
+                                            :accept="`image/*`"
+                                            :multiple="false"
+                                            :preview="true"
+                                        />
+                                    </div>
+                                    <div class="col-lg-3" >
+                                        <input-field
+                                            :label="`Related Image 1`"
+                                            :name="`image2`"
+                                            :type="`file`"
+                                            :accept="`image/*`"
+                                            :multiple="false"
+                                            :preview="true"
+                                        />
+                                    </div>
+                                    <div class="col-lg-3" >
+                                        <input-field
+                                            :label="`Related Image 2`"
+                                            :name="`image3`"
+                                            :type="`file`"
+                                            :accept="`image/*`"
+                                            :multiple="false"
+                                            :preview="true"
+                                        />
+                                    </div>
+                                    <div class="col-lg-3" >
+                                        <input-field
+                                            :label="`Related Image 3`"
+                                            :name="`image4`"
+                                            :type="`file`"
+                                            :accept="`image/*`"
+                                            :multiple="false"
+                                            :preview="true"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div class="form-group d-grid align-content-start full_width gap-1 mb-2 " >
@@ -127,9 +160,7 @@
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -162,11 +193,13 @@ export default {
         }
     },
     created: function () {
+        this.set_clear_selected_categorys(false);
         this.initEditor();
     },
     methods: {
         ...mapActions([`store_${store_prefix}`]),
         ...mapMutations([
+            `set_clear_selected_categorys`,
             `set_${store_prefix}_description`,
             `set_${store_prefix}_specification`,
         ]),

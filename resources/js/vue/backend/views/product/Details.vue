@@ -22,7 +22,7 @@
                                         <h3>{{ this[`get_${store_prefix}`].product_name }}</h3>
                                     </div>
                                     <div class="col-md-5 mt-2">
-                                        <img :src="'/'+this[`get_${store_prefix}`].related_images[0].image" width="100px">
+                                        <img v-for="(image,index) in this[`get_${store_prefix}`].related_images" :key="index" :src="'/'+image.image" style="margin:5px;" width="100px">
                                     </div>
                                     <!-- <div class="col-md-3 text-right pqr"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></div> -->
                                     <h3 class="text-left para mt-2">Price: {{ this[`get_${store_prefix}`].default_price }}</h3>
